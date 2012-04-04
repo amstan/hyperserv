@@ -20,7 +20,7 @@ def match(pattern,string):
 			oldpattern=oldpattern[1:]
 	pattern+="$"
 	
-	return re.match(pattern,string)
+	return re.match(pattern,string,re.IGNORECASE)
 
 def checkForExpired(function):
 	def newfunction(*args):
