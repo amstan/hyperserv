@@ -8,7 +8,7 @@ from datetime import timedelta, datetime
 from hyperserv.events import eventHandler, triggerServerEvent
 
 from hypershade.config import config
-from hypershade.cubescript import systemCS, CSCommand
+from hypershade.cubescript import systemCS, CSCommand, playerCS
 from hypershade.usersession import UserSessionManager, PermissionError
 from hypershade.util import ipLongToString, modeNumber, mastermodeNumber, formatCaller
 from hypershade.files import openfile
@@ -19,14 +19,14 @@ class ServerError(Exception): pass
 
 @CSCommand("vote")
 def voteMap(caller,name,mode=None):
-        """This command works just like the #map command except rather than directly going to a map it places a vote for the map of choice. Just like with #map, the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version)."""
+	"""Places a vote for the map of choice. This can be used to call maps from /storage/maps."""
 	if mode is None:
 		mode=sbserver.gameMode()
 	triggerServerEvent("vote_map",[caller,modeNumber(mode),name])
 
 @CSCommand("map","master")
 def changeMap(caller,name,mode=None):
-        """This command works just like the /map command except for with #map the caller can also call maps from /storage/maps. This calls the map from the server removing the need to /sendmap (as long as the maps are the same version). """
+	"""Same as the /map command."""
 	if mode is None:
 		mode=sbserver.gameMode()
 	mode=modeNumber(mode)
@@ -44,7 +44,7 @@ def changeMap(caller,name,mode=None):
 
 @CSCommand("master","master")
 def setMaster(caller):
-        """This command makes the caller the master of the server. This is denoted by the green color of the callers name. Also like with #admin it does not give the caller any powers beyond what the caller had before."""
+	"""Makes the caller the master of the server."""
 	if(caller[0]=="ingame"):
 		return sbserver.setMaster(caller[1])
 	raise ServerError("You are not ingame.")
@@ -52,7 +52,7 @@ def setMaster(caller):
 
 @CSCommand("admin","admin")
 def setAdmin(caller):
-        """Makes the caller the admin of the server. This is denoted by the gold color of their name. Note that this is just for show because it does not give the user any more powers."""
+	"""Makes the caller the admin of the server."""
 	if(caller[0]=="ingame"):
 		return sbserver.setAdmin(caller[1])
 	raise ServerError("You are not ingame.")
@@ -60,7 +60,7 @@ def setAdmin(caller):
 
 @CSCommand("relinquish")
 def relinquish(caller):
-        """This command gives up the level of power that the player has (master or admin)."""
+	"""Gives up the level of power that the player has (master or admin)."""
 	if(caller[0]=="ingame"):
 		return sbserver.resetPrivilege(caller[1])
 	raise ServerError("You are not ingame.")
@@ -68,7 +68,7 @@ def relinquish(caller):
 
 @CSCommand("kick","master")
 def kick(caller,cn):
-        """This allows the caller to kick another player; however, this will not override players with higher permission. Meaning, a master level permission can not kick someone with admin or trusted permission. To prevent the player from rejoining the server, they will also be banned for the default 60 minutes."""
+	"""Kicks another player; however, this command does not work on players with higher permission. Kicking a player also gives them a 60 minute ban."""
 	cn=int(cn)
 	try:
 		UserSessionManager.checkPermissions(caller,UserSessionManager[("ingame",cn)][1]) #check if the other person is more privileged
@@ -82,13 +82,13 @@ def kick(caller,cn):
 
 @CSCommand("sendto","master")
 def sendto(caller,cn):
-        """This command forces the specified player to /getmap. This is useful when a player is not paying attention, AFK or, for extension, if the caller wanted everyone to getmap."""
+	"""Forces the specified player to /getmap."""
 	cn=int(cn)
 	return sbserver.sendMapTo(cn)
 
 @CSCommand("spectator")
 def spectator(caller,boolean=None,cn=None):
-        """If there are no arguments other than #spectator then the caller will be set to spectator. The first argument is a boolen that says what state of spectating the player will be (0 for not not a spectator and 1 for spectator), anything other than 0 will result in an them being a spectator. The cn is the client number of the player that the caller want spectated. If left off it will apply to the caller."""
+	"""Sets spectator for the given cn. If the cn is left off it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -118,7 +118,7 @@ def spectatorHelpler(boolean,cn):
 
 @CSCommand("editmute","master")
 def editmute(caller,boolean=None,cn=None):
-        """If there are no arguments other than #editmute then the caller will be editmuted. The first argument is a boolen that says what state of editmuted the player will be (0 for not editmuted and 1 for editmuted), anything other than 0 will result in an editmute. The cn is the client number of the player that the caller want editmuted. If left off it will apply to the caller."""
+	"""Sets an editmute on the given cn. If the cn is left off it applies to the caller."""
 	#empty args
 	if boolean is None:
 		boolean=1
@@ -141,7 +141,7 @@ def editmute(caller,boolean=None,cn=None):
 
 @CSCommand("mastermode","master")
 def masterMode(caller,name=None):
-        """This changes the mastermode in the same way that /mastermode does without the need to have claimed master or admin."""
+	"""Changes the mastermode of the server."""
 	if name==None:
 		return sbserver.masterMode()
 	mastermode=mastermodeNumber(name)
@@ -157,7 +157,7 @@ def masterMode(caller,name=None):
 
 @CSCommand("who")
 def who(caller,where="ingame"):
-        """This gives info on all the people logged in to the server. It tells their name, client number and IP address. Use this in conjuction with #echo. Ex: #echo (who)"""
+	"""Gives info on all the people logged in to the server. This includes: name, cn and IP address. Use this in conjuction with #echo. Ex: #echo (who)"""
 	def cndetails(cn):
 		return sbserver.playerName(cn)+" (cn"+str(cn)+"/"+ipLongToString(sbserver.playerIpLong(cn))+")"
 	
@@ -173,7 +173,7 @@ def who(caller,where="ingame"):
 
 @CSCommand("list")
 def listCommands(caller,which="hyperserv"):
-	"""List all commands available. Use this in conjuction with #echo. Ex: #echo (list)"""
+	"""Lists all commands available. Use this in conjuction with #echo. Ex: #echo (list)"""
 	if which=="all":
 		commands=systemCS.functions.keys()+systemCS.external.keys()
 	elif which=="cubescript":
@@ -185,23 +185,23 @@ def listCommands(caller,which="hyperserv"):
 
 @CSCommand("say","admin")
 def say(caller,*what):
-        """This commad says string to the server, simialar to #notice, just without the Notice from PlayerName: MESSAGE HERE"""
+	"""Causes the server to say the input, simialar to #notice, without "Notice from PlayerName: MESSAGE HERE"""
 	string=' '.join(map(str,what))
 	triggerServerEvent("say",[string])
 	return string
 
 @CSCommand("echo")
 def echo(caller,*what):
-        """This is how the caller can read the output from some commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)"""
+	"""Displays the output from commands. Examples: listusersessions, list, user, who, whoami. Note that the command must be in parentheses. #echo (command)"""
 	string=' '.join(map(str,what))
 	triggerServerEvent("echo",[caller,string])
 	return string
 
 @CSCommand("ban","trusted")
 def ban(caller,who=None,reason="",time="60"):
-        """This bans the person specified. If there is not a name given then the caller will be banned. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
+	"""Bans the person specified. If time is "perm","permanent","permanently","0" or 0 then the ban will be permanent. The default ban time is 60 minutes."""
 	if who is None:
-		bans(caller)
+		return
 	
 	try:
 		who=sbserver.playerName(int(who))
@@ -220,17 +220,22 @@ def ban(caller,who=None,reason="",time="60"):
 
 @CSCommand("bans","master")
 def bans(caller):
-        """This returns all of the current bans in effect. Use this in conjuction with #echo. Ex: #echo (bans)"""
+	"""Returns all of the current bans in effect. Use this in conjuction with #echo. Ex: #echo (bans)"""
 	return bandatabase
 
 @CSCommand("delban","trusted")
 def delban(caller,who):
-        """This deletes a username from the database."""
+	"""Deletes a username from the ban database."""
 	del bandatabase[who]
+
+@CSCommand("clearbans", "master")
+def clearbans(caller):
+	"""Clears all of the bans ending within the next hour."""
+	bandatabase.clearbans()
 
 @CSCommand("minsleft")
 def minsleft(caller,time=None):
-        """This sets the amount of time remianing on the map. This can only be used when the mapmode is not Coopedit"""
+	"""Sets the amount of time remianing on the map. This can also be used in conjuction with #echo. Ex: #echo (minsleft)"""
 	if time is not None:
 		UserSessionManager.checkPermissions(caller,"trusted")
 		sbserver.setMinsRemaining(int(time))
@@ -238,7 +243,7 @@ def minsleft(caller,time=None):
 
 @CSCommand("team")
 def team(caller,*args):
-        """This allows players to switch teams just like with /team."""
+	"""Allows players to switch teams just like with /team."""
 	if(len(args)==1):
 		if(caller[0]=="ingame"):
 			cn=caller[1]
@@ -260,7 +265,7 @@ def team(caller,*args):
 
 @CSCommand("mute","master")
 def mute(caller,*args):
-        """If there are no arguments other than #mute then the caller will be muted. The first argument is a boolen that says what state of muted the player will be (0 for not muted and 1 for muted), anything other than 0 will result in an mute. The cn is the client number of the player that caller want muted. If left off it will apply to the caller."""
+	"""Sets a mute on the given cn. If the cn is left off it applies to the caller."""
 	if(len(args)==1):
 		boolean=1
 		cn=args[0]
@@ -276,7 +281,7 @@ def mute(caller,*args):
 
 @CSCommand("savemap","trusted")
 def savemap(caller,name=None):
-        """This allows players to savemaps to the server. This not only allows for easier transfer of files later on, but also allows for partial asynchronous work on a map by saving the map back to the server."""
+	"""Saves the map to the server. Note that the map must be sent prior to saving."""
 	if name is None:
 		name=sbserver.mapName()
 	ogzfilename,ogz=openfile(os.path.join("maps",name+".ogz"),"wb")
@@ -290,7 +295,7 @@ def savemap(caller,name=None):
 
 @CSCommand("loadmap","master")
 def loadmap(caller,name=None):
-        """This is the opposite of #savemap. This is automatically executed when you change to a map that the server has in storage."""
+	"""Loads a map from the server. This is automatically executed when you change to a map that the server has in storage."""
 	if name is None:
 		name=sbserver.mapName()
 	
@@ -304,3 +309,24 @@ def loadmap(caller,name=None):
 	ogz.close()
 	
 	triggerServerEvent("loadmap",[caller,name,ogzfilename])
+
+def color(number, string):
+	return '\fs\f' + str(number) + string + '\fr'
+
+@CSCommand("pm")
+def CSserverPM(caller, cn, *what):
+	"""Allows players to pm other players."""
+	string=' '.join(map(str,what))
+	try:
+		cn = int(cn)
+		reciver = ("ingame", cn)
+		if caller[0] == "ingame":
+			namecn = " ("+str(caller[1])+"): "
+		else:
+			namecn = ""
+		string1 = formatCaller(caller) + namecn
+		newstring = color(3, string1+string)
+		playerCS.executeby(reciver,"echo \"%s\"" %newstring)
+	except ValueError:
+		triggerServerEvent("pm",[caller,cn,string])
+	return string

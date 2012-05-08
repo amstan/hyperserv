@@ -1,3 +1,6 @@
 import base
 import cubes
-import image
+try:
+	import image
+except ImportError:
+	pass

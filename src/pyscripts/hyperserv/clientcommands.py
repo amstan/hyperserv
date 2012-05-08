@@ -86,13 +86,13 @@ def simpleMasterRequest(caller):
 		raise PermissionError("There are masters/admins present.")
 
 def setSimpleMaster(caller):
-	"""sets the caller a simple master, just like /setmaster 1 does it on a vanilla server"""
+	"""Sets the caller a simple master, just like /setmaster 1 does it on a vanilla server"""
 	UserSessionManager[caller]=("notloggedin","master")
 	playerCS.executeby(caller,"master")
 
 @CSCommand("givemaster","master")
 def giveMaster(caller,cn):
-        """This command gives master to the cn designated. This will raise an error if the player already has permssions at, or beyond, master."""
+		"""Gives master to the cn designated. This will raise an error if the player already has permssions at, or beyond, master."""
 	target=("ingame",int(cn))
 	if UserSessionManager[target][0]=="notloggedin":
 		setSimpleMaster(target)

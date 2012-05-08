@@ -98,3 +98,7 @@ def usercommunicationirc(caller,msg):
 @eventHandler('notice')
 def noticeirc(msg):
 	factory.broadcast(msg)
+
+@eventHandler('pm')
+def ircpm(caller,cn,msg):
+	factory.notice(cn,"<"+formatCaller(caller)+"> "+msg)

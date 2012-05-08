@@ -51,6 +51,8 @@ If the user is trying to login with IRC they need to send their message to the s
 Setting Up a New User Account
 The first step in setting up a new user account is the adduser command. "#adduser (username) (permission level)" After the user has been added to the database then the person adding the user may log the person in that they are creating the account for with the loginother command. "#loginother (where) (cn) [username]" At this point you may instruct the user to add their own password. This can be done with "#user 'password' 'the password that they want'". Then you can add their usernames with "#useradmin (username) 'sauerbraten name' (their sauerbraten name)" and "#useradmin (username) 'irc nick' (their irc nick)". By doing this the player can then login using just #login theirawesomepass, rather than having to always type in their server username *Note that these names are respective of where they are at (ingame vs irc). This can then be checked by the user with "#echo (user)" or by admins with #echo (useradmin (username)).
 
+For setting up the first user account you must login as "firstuser" with the password "first". *Note after setting up your first account delete this one.
+
 EX:
 To add the player: "PLAYER" with the ingame name "PLAYER_INGAME" and with an irc nick of "PLAYER_IRC" with a permission level of "trusted". They are also currently ingame with the CN of 3 and they want their password to be "AW3S0Me". So, one would type the following commands:
 

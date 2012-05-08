@@ -14,7 +14,7 @@ def serverNotice(string):
 
 @CSCommand("notice","admin")
 def CSserverNotice(caller, *strings):
-        """This allows the caller to make a server notice at the top of the screen of all of the players."""
+	"""Allows the caller to make a server notice for all players in the server to see."""
 	string=' '.join(strings)
 	if caller[0]=="system":
 		serverNotice(string)
@@ -124,9 +124,9 @@ def noticePlayerTeamChanged(cn):
 @eventHandler('vote_map')
 def noticeVoteMap(caller,mode,name):
 	if caller[1] in muted_cns:
-                playerCS.executeby(caller,"echo \"You are muted so you are not allowed to vote.\"") 
+				playerCS.executeby(caller,"echo \"You are muted so you are not allowed to vote.\"") 
 	else:
-                serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
+				serverNotice("%s votes to play on %s (%s)." % (formatCaller(caller),name,modeName(mode)))
 
 @eventHandler('savemap')
 def noticeSavemap(caller,mapname,ogzfilename):
