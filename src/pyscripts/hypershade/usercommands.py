@@ -152,25 +152,22 @@ def takeMaster(caller):
 def helpCommand(caller, command="help"):
 	"""Gives the various help information about commands in hyperserv."""
 	if command in systemCS.helpfunc.keys():
-		#get function and permission from handler
 		f = systemCS.helpfunc[command][0]
 		permission = systemCS.helpfunc[command][1]
-		p = '(Permission: {0})'.format(permission)
 		docstring = f.__doc__.replace('\n', ' ')
-
 		if f.func_defaults:
-			n, n2 = len(f.func_defaults), f.func_code.co_argcount
-			defaults = zip(f.func_code.co_varnames[1:n2][-n:],f.func_defaults)
-			args = f.func_code.co_varnames[1:n2][:-n]
-			d = (x[0]+'='+str(x[1]) for x in defaults)
+			nDefault = len(f.func_defaults)
+			defaults = zip(f.func_code.co_varnames[1:f.func_code.co_argcount][-nDefault:],f.func_defaults)
+			args = f.func_code.co_varnames[1:f.func_code.co_argcount][:-nDefault]
+			d = [x[0]+'='+str(x[1]) for x in defaults]
 			if args:
-				a = "({0}, {1})".format(', '.join(args), ', '.join(d))
-			else:
-				a = "({0})".format(', '.join(d))
+								string = command+'('+', '.join(args)+', '+', '.join(d)+') (Permission: '+permission+') '+docstring
+						else:
+								string = command+'(' + ', '.join(d)+') (Permission: '+permission+') '+docstring
 		else:
 			args = f.func_code.co_varnames[1:f.func_code.co_argcount]
-			a = '({0})'.format(', '.join(args))
-
-		return command + a + p + docstring
-	else:
-		raise CSError("No such command \"{}\"".format(command))
+			string = command+'('+', '.join(args)+') (Permission: '+permission+') '+docstring
+		#triggerServerEvent("echo",[caller,string])
+				return string
+		else:
+				raise CSError("No such command \""+command+"\"")
