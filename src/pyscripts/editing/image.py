@@ -15,7 +15,6 @@ from hypershade.files import openfile
 @CSCommand("loadimage1","trusted")
 @threaded
 def loadimage1(caller,imagename,s=16,maxh=20):
-	'''Loads an image and starts the process of converting a heightmap into cube packets for map generation(blocky).'''
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh))
 	
@@ -33,7 +32,6 @@ def loadimage1(caller,imagename,s=16,maxh=20):
 @CSCommand("loadimage2","trusted")
 @threaded
 def loadimage2(caller,imagename,s=16,maxh=20):
-	'''Loads an image and starts the process of converting a heightmap into cube packets for map generation(smooth).'''
 	s=int(s)
 	(xsize, ysize, heights)=loadheightmap(imagename,int(maxh)*8)
 	

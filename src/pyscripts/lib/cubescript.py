@@ -104,15 +104,13 @@ class CSParser:
 
 class CSInterpreter:
 		
-	def __init__(self,external=None,variables={},helpfunc=None):
+	def __init__(self,external=None,variables={}):
 		if external is None:
 			self.external={}
 			self.variables={}
-			self.helpfunc={}
 		else:
 			self.external=external
 			self.variables=variables
-			self.helpfunc=helpfunc
 		
 		self.functions = {
 			"begin":  self.begin,

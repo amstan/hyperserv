@@ -78,10 +78,7 @@ class BanDatabase():
 	
 	def cleargbans(self):
 		database.query('DELETE FROM `bans` WHERE `reason` = "gban"')
-
-	def clearbans(self):
-		database.query("DELETE FROM `bans` WHERE `expires` < DATE_ADD(UTC_TIMESTAMP(),interval 60 minute) AND `expires` NOT LIKE '0000-00-00 00:00:00'")
-
+	
 	def __repr__(self):
 		return repr(self.items())
 	

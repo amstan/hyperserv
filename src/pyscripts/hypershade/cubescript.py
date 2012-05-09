@@ -34,7 +34,6 @@ class CSCommand(object):
 	def __call__(self,f):
 		functionpointer=lambda *args: self.wrapper(f,*args)
 		systemCS.external[self.name]=functionpointer
-		systemCS.helpfunc[self.name]=[f, self.permissionRequirement]
 		return f
 
 def checkUntrustedCode(code):

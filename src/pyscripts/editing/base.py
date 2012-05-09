@@ -45,7 +45,6 @@ packetSendingQueue=packetSendingQueue()
 @CSCommand("clearpackets","admin")
 @eventHandler('no_clients')
 def stopSendingPackets(caller=None):
-	'''Clears all of the packets from the queue.'''
 	packetSendingQueue.stop()
 
 def packettypename(number):
@@ -59,7 +58,6 @@ def packettypenumber(name):
  
 @CSCommand("sendpacket","admin")
 def sendpacket(caller,*args):
-	'''Sends the specified packet from the server.'''
 	if len(args)==0:
 		return
 	packettype=packettypes[packettypenumber(args[0])]
@@ -74,7 +72,6 @@ def noticeEditPacket(cn,packettype,*data):
 
 @CSCommand("newmap","trusted")
 def newmap(caller,size):
-	'''Starts a newmap. Includes an arg for the map size.'''
 	size=int(size)
 	if size<10:
 		size=10
